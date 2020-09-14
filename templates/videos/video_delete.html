@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3>Do you want to delete video? {{ video.title }}</h3>
+    <form action="{% url 'video_delete' video.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <button><a href="{% url 'video_view' video.id %}">Go Back</a></button>
+    </form>
+{% endblock content %}

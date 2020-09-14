@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+	html {
+		scroll-behavior: auto;
+	}
+	.grid {
+		display: flex;
+		flex-direction: row;
+	}
+	.search {
+		max-width: 700px;
+		width: 100%;
+	}
+	.bar {
+		width: 80%;
+		padding: 10px;
+	}
+	.bar-button {
+		padding: 10px;
+		border: 1px solid lightyellow;
+		background: rgb(156, 214, 214);
+	}
+	.bar-button:hover {
+		background: rgb(66, 201, 201);
+		cursor: pointer;
+	}
+	h4>a {
+		text-decoration: none;
+	}
+	img {
+        border: 1px solid black;
+        border-radius: 0.7em;
+		height: 250px;
+    }
+	img:hover {
+		transform: scale(1.01);
+	}
+	.column {
+		height: 250px;
+		margin-right: 10px;
+	}
+	.wrapper {
+		position: relative;
+		overflow: hidden;
+		scroll-behavior: smooth;
+	}
+	.float{
+		position: relative;
+		width:60px;
+		height:60px;
+		bottom:40px;
+		background-color:#222;
+		color:#FFF;
+		border-radius:50px;
+		text-align:center;
+		box-shadow: 2px 2px 3px #999;
+		bottom: 160px;
+		left: 0px;
+		opacity: 0.5;
+		color: white;
+		font-size: 50px;
+	}
+	.float:hover {
+	 cursor: pointer;
+	 opacity: 0.7;
+	}
+
+	.my-float{
+		margin-top:22px;
+	}
+	.main-div {
+		width: 100%;
+	}
+	@media (max-width: 376px) {
+        .wrapper {
+			overflow-x: auto;
+		}
+		.controls {
+			display: none;
+		}
+    }
+	.search {
+		justify-content: center;
+		margin: auto;
+		align-content: center;
+	}
+</style>
+		<form class="search" method="GET">
+			<input class="bar" type="text" name="query" placeholder="Search.." value>
+			<button type="submit" class="bar-button"><i class="fa fa-search" aria-hidden="true"></i></button>
+		</form>
+	{% if videos %}
+		{% for video_list in videos %}
+			{% with video_list|first as category %}
+			<div class="category-title">
+				<h4 style="width: 1px;"><a class="category_title_link" href="{% url 'sub_view_all' category.category.category category.subcategory.subcategory %}">{{ category.subcategory.subcategory }}</a></h4>
+			</div>
+			{% endwith %}
+			<div class="main-div">
+				<div class="grid wrapper" id="cat-{{ forloop.counter }}">
+					{% for video in video_list %}
+						<div class="column">
+							<a href="{% url 'video_view' video.id %}"><img  class="media" src="{{ video.thumbnail.url }}" alt=""></a>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="controls">
+				<i class="float" style="float: left;" id="prev-{{ forloop.counter }}"><div class="my-float"></div></i>
+				<i class="float" style="float: right;  right: 0;" id="next-{{ forloop.counter }}"><div class="my-float"></div></i>
+			</div>
+			<script>
+				document.getElementById('prev-{{ forloop.counter }}').innerHTML = '<'
+				document.getElementById('next-{{ forloop.counter }}').innerHTML = '>'
+				document.getElementById('prev-{{ forloop.counter }}').addEventListener('click', function() {
+					document.getElementById('cat-{{ forloop.counter }}').scrollLeft -= 600;
+				})
+				document.getElementById('next-{{ forloop.counter }}').addEventListener('click', function() {
+					document.getElementById('cat-{{ forloop.counter }}').scrollLeft += 600;
+				})
+			</script>
+		{% endfor %}
+	{% else %}
+		<p>No Videos</p>
+	{% endif %}
+	<script>
+		document.querySelector('.bar').value = '{{ request.GET.query }}';
+	</script>
+{% endblock content %}

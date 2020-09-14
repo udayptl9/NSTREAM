@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="login-page">
+    <div class="form" style="padding-top: 10px;">
+        <h3>Add Category</h3>
+        {% if message %}
+            <h5>Category Already Existed</h5>
+        {% endif %}
+<form method="POST">
+    {% csrf_token %}
+    <input type="text"id="id_category" name="category" placeholder="category">
+    <div>
+        <button class="submit" type="submit">Add Category</button>
+    </div>
+</form>
+</div>
+</div>
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    </style>
+    <div class="container">
+        <h3>Manage Categories Here</h3>
+        {% if categories %}
+        <table>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Category</th>
+            </tr>
+            {% for category in categories %}
+                <tr>
+                    <td>{{ forloop.counter}}</td>
+                    <td>{{ category.category }}</td>
+                </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <h4>No categories</h4>
+          {% endif %}
+    </div>
+{% endblock content %}

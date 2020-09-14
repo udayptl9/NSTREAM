@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .parent {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-areas: "left right";
+    }
+    .left {
+        grid-area: left;
+    }
+    .dropzone_2 {
+        display: grid;
+        grid-template-columns: 80% 20%;
+        grid-template-areas: "drop time";
+    }
+    .drop {
+        grid-area: drop;
+    }
+    .time {
+        grid-area: time;
+        margin-left: 10px;
+    }
+    .right {
+        grid-area: right;
+    }
+
+    .origin {
+    padding: 10px;
+    padding-top: 0;
+    }
+
+    .draggable {
+    background-color: rgb(109, 192, 192, 0.6);
+    font-weight: normal;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    }
+    .dropzone {
+    background-color: rgb(74, 184, 74, 0.6);
+    padding: 10px;
+    margin: 10px;
+    min-height: 100px;
+    }
+    .single{
+        display: none;
+    }
+    .parent {
+        display: none;
+    }
+</style>
+<video class="video" src="{{ video.video.url }}" style="width: 100%px; max-width: 650px;" controls></video>
+{% if ads %}
+    <form action="{% url 'video_ads' video.id %}" method="POST">
+        {% csrf_token %}
+        <div class="container">
+            <h3>Manage Ads for video: {{ video.title }}</h3>
+            <input onclick="check_noads()" id="noads" type="radio" name="action" value="noads">
+            <label for="noads">No Ads</label><br><br>
+            <input onclick="check_random()" id="random" type="radio" name="action" value="random">
+            <label for="random">Random</label><br><br>
+            <input onclick="check_single()" id="single" type="radio" name="action" value="single">
+            <label for="single">Single Ad Multiple Times</label>
+            <div class="single">
+                <select name="ad">
+                    <option selected>Select Ad Here</option>
+                    {% for ad in ads %}
+                        <option value="{{ ad.video.name }}">{{ ad.video.name }}</option>
+                    {% endfor %}
+                </select>
+            </div><br><br>
+            <input onclick="check_custom()" id="custom" type="radio" name="action" value="custom">
+            <label for="custom">Custom</label><br>
+            <div class="parent">
+                <div class="left">
+                    <div
+                        class="dropzone dropzone_1"
+                        ondragover="onDragOver(event);"
+                        ondrop="onDrop_1(event);"
+                    >
+                        Beginning Ad
+                    </div><br>
+                    <div
+                        class="dropzone dropzone_2"
+                        ondragover="onDragOver(event);"
+                        ondrop="onDrop_2(event);"
+                    >
+                        <div class="drop">Middle Ad
+                        </div>
+                        <div class="time">
+                            <select class="video_timer" name="video_timer">
+                                <option>Select Time</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button class="addDiv">Add One More</button>
+                <div class="right">
+                    <div class="origin">
+                        <h3>Ads Avaliable</h3>
+                        {% for ad in ads %}
+                            <div
+                                id="draggable-{{ forloop.counter }}"
+                                class="draggable"
+                                draggable="true"
+                                ondragstart="onDragStart(event);"
+                            >
+                                {{ ad.video.name }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            </div><br>
+            <button class="submit" type="submit" style="padding: 8px; background: bisque;">Submit</button>
+        </div>
+    </form>
+    <script>
+        var middle_ads_count = 1
+        function removeDiv(event, id) {
+            event.preventDefault()
+            var element = $(`.drop_main_${id}`)
+            element.animate({opacity: '0'}, 150, function() {
+                element.animate({height: '0px'}, 150, function() {
+                    element.remove()
+                })
+            })
+        }
+        document.querySelector('.addDiv').addEventListener('click', function(e) {
+            e.preventDefault()
+            middle_ads_count += 1
+            $('.left').append(`<div class='dropzone dropzone_2 drop_main_${middle_ads_count}' ondragover='onDragOver(event);' ondrop='onDrop_2(event);'><div class='drop'>Middle Ad</div> <div class='time'><select name='' class='drop_select_${middle_ads_count} video_timer'><option>Select Time</option></select><button class="removeDiv" onclick="removeDiv(event, ${middle_ads_count})">Remove</button></div></div>`)
+            var video = document.querySelector('.video')
+            var video_duration = Math.floor(video.duration)
+            var temp = video_duration * 1000
+            for (i=0; i<video_duration; i++) {
+                var min = Math.floor(temp / (60 * 1000));
+                var sec = Math.floor((temp - (min * 60 * 1000)) / 1000);
+                $(`.drop_select_${middle_ads_count}`).append("<option>" + min + ":" + sec + "</option>")
+                temp -= 1000
+            }
+        })
+        document.querySelector('.submit').addEventListener('click', function(e) {
+            var action = document.querySelectorAll("input[name='action']")
+            for(i=0; i < action.length; i++) {
+                if(action[i].checked) {
+                    if(action[i].value == 'custom') {
+                        e.preventDefault()
+                        var beginnerAds = $(".dropzone_1 > .draggable").text();
+                        var middleAds = $(".dropzone_2 > .drop > .draggable").text();
+                        var times = ""
+                        $(".video_timer").each(function() {
+                            times += ($(this).children("option:selected").val()) + " ";
+                        })
+                        $.ajax({
+                            type: "POST",
+                            url: "{% url 'video_ads' video.id %}",
+                            data: {
+                                action: 'video_ads',
+                                beginnerAds: beginnerAds,
+                                middleAds: middleAds,
+                                times: times,
+                                csrfmiddlewaretoken: "{{ csrf_token }}",
+                            }, success: function(json) {
+                                if(json.text == 'true') {
+                                    window.location.href= "/";
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+        })
+        function onDragStart(event) {
+            event
+                .dataTransfer
+                .setData('text/plain', event.target.id);
+
+            event
+                .currentTarget
+                .style
+                .backgroundColor = 'yellow';
+        }
+        function onDragOver(event) {
+            event.preventDefault();
+        }
+        function onDrop_1(event) {
+            var parent_element_count = document.querySelector('.dropzone_1').childElementCount;
+            if (parent_element_count ==0) {
+                const id = event.dataTransfer.getData('text');
+                const draggableElement = document.getElementById(id);
+                const dropzone = event.target;
+                dropzone.appendChild(draggableElement);
+                event.dataTransfer.clearData();
+
+            } else {
+                alert('There should be only one ad at beginning')
+            }
+        }
+        function onDrop_2(event) {
+            const id = event.dataTransfer.getData('text');
+            const draggableElement = document.getElementById(id);
+            const dropzone = event.target;
+            dropzone.appendChild(draggableElement);
+            event.dataTransfer.clearData();
+        }
+
+        function check_noads() {
+            if (document.querySelector("input[value='noads']").checked) {
+                document.querySelector('.single').style.display = 'none';
+                document.querySelector('.parent').style.display = 'none';
+            }
+        }
+
+        function check_single() {
+            if (document.querySelector("input[value='single']").checked) {
+                document.querySelector('.single').style.display = 'block';
+                document.querySelector('.parent').style.display = 'none';
+            }
+        }
+        function check_custom() {
+            if (document.querySelector("input[value='custom']").checked) {
+                document.querySelector('.parent').style.display = 'grid';
+                document.querySelector('.single').style.display = 'none';
+                var video = document.querySelector('.video')
+                var video_duration = Math.floor(video.duration)
+                var temp = video_duration * 1000
+                $("select[name='video_timer").empty;
+                for (i=0; i<video_duration; i++) {
+                    var min = Math.floor(temp / (60 * 1000));
+                    var sec = Math.floor((temp - (min * 60 * 1000)) / 1000);
+                    $("select[name='video_timer").append("<option>" + min + ":" + sec + "</option>")
+                    temp -= 1000
+                }
+            }
+        }
+        function check_random() {
+            if (document.querySelector("input[value='random']").checked) {
+                document.querySelector('.parent').style.display = 'none';
+                document.querySelector('.single').style.display = 'none';
+            }
+        }
+    </script>
+{% else %}
+    <h4>There are no ads, Please Add some AdVideods <a href="{% url 'adVideo' %}">Click Here</a></h4>
+{% endif %}
+{% endblock content %}

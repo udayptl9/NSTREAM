@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    div{
+        padding-bottom: 5px;
+    }
+</style>
+    <h4>Add Subadmin</h4>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="id_email">Email: </label>
+            <input type="email" name="email" id="id_email" required>
+        </div>
+        <div>
+            <label for="id_superuser">Superuser: </label>
+            <input type="radio" id="id_superuser" name="action" value="superuser" required>
+        </div>
+       <div>
+           <label for="id_others">Add video, Add language, Add categories</label>
+           <input type="radio" id="id_others" name="action" value="add video, add language, add categories" requried>
+       </div>
+        <button type="submit">Add</button>
+    </form>
+{% endblock content %}

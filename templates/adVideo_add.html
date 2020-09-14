@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="login-page">
+    <div class="form" style="padding-top: 10px;">
+      <h3>Add Video Ad Here</h3>
+      <form method='POST' action="{% url 'adVideo' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" name="video" accept="video/*"/>
+          <button type="Submit">Add Video</button>
+      </form>
+    </div>
+</div>
+<style>
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  </style>
+  <div class="container">
+      <h3>Manage Ad Videos Here</h3>
+      {% if advideos %}
+      <table>
+          <tr>
+            <th>Sl. No.</th>
+            <th>Video</th>
+            <th>Actions</th>
+          </tr>
+          {% for ad in advideos %}
+              <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ ad.video }}</td>
+                  <td><a href="{% url 'delete_advideo' ad.id %}">Delete</a></td>
+              </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <h4>No Ad Videos</h4>
+        {% endif %}
+  </div>
+{% endblock content %}

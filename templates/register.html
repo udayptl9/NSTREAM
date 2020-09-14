@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+  .login-page {
+    width: 360px;
+    padding: 1% 0 0;
+    margin: auto;
+  }
+  .form {
+    position: relative;
+    z-index: 1;
+    background: #FFFFFF;
+    max-width: 360px;
+    margin: 0 auto 100px;
+    padding: 45px;
+    text-align: center;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  }
+  .form input, select {
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    background: #f2f2f2;
+    width: 100%;
+    border: 0;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  .form button {
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    background: #4CAF50;
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: #FFFFFF;
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
+  }
+  .form button:hover,.form button:active,.form button:focus {
+    background: #43A047;
+  }
+  .form .message {
+    margin: 15px 0 0;
+    color: #b3b3b3;
+    font-size: 12px;
+  }
+  .form .message a {
+    color: #4CAF50;
+    text-decoration: none;
+  }
+  .form .register-form {
+    display: none;
+  }
+  body {
+    background: rgb(241, 234, 234);
+    font-family: "Roboto", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;      
+  }
+</style>
+  <div class="login-page">
+    <div class="form" style="padding-top: 10px;">
+      <h3>Register Here</h3>
+      <form method='POST' class="login-form">
+          {% csrf_token %}
+          <input type="text" name="username" placeholder="username"/>
+          <input type="email" name="email" placeholder="email address"/>
+          <input type="text" name="first_name" placeholder="first name"/>
+          <input type="text" name="last_name" placeholder="last name"/>
+          <input type="number" name="mobileno" placeholder="mobile no."/>
+          <input type="number" name="age" placeholder="age"/>
+          <select name="gender">
+              <option value="" selected>Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+          </select>
+          <select name="qualification" id="id_qualification">
+              <option value="" selected>Qualification</option>
+              <option value="Bussiness">Bussiness</option>
+              <option value="Student">Student</option>
+              <option value="Teacher">Teacher</option>
+              <option value="Employee">Employee</option>
+              <option value="Doctor">Doctor</option>
+              <option value="Others">Others</option>  
+          </select>
+          <input type="password" name="password1" placeholder="password" minlength="8"/>
+          <input type="password" name="password2" placeholder="retype-password"/>
+          <button type="Submit">Register</button>
+          <p class="message">Already registered? <a href="{% url 'login2' %}">Sign In</a></p>
+      </form>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+  <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    .add_subadmin {
+      background: rgb(195, 157, 150);
+      padding: 10px;
+      color: white;
+    }
+    .add_subadmin:hover {
+      background: rgb(195, 157, 111);
+      cursor: pointer;
+    }
+    </style>
+    <div class="container">
+        <h3>Manage Subadmins Here</h3>
+        <a href="{% url 'subadmin_add' %}"><button class="add_subadmin">Add Subadmin</button></a><br><br>
+        {% if subadmins %}
+        <table>
+            <tr>
+              <th>Email</th>
+              <th>Is SuperUser</th>
+              <th>Add Video</th>
+              <th>Add Category</th>
+              <th>Add Language</th>
+              <th>Added on</th>
+              <th>Verified</th>
+              <th>Actions</th>
+            </tr>
+            {% for subadmin in subadmins %}
+                <tr>
+                    <td>{{ subadmin.email }}</td>
+                    <td>{{ subadmin.superuser }}</td>
+                    <td>{{ subadmin.addvideo }}</td>
+                    <td>{{ subadmin.addcategory }}</td>
+                    <td>{{ subadmin.addlanguage }}</td>
+                    <td>{{ subadmin.added_on }}</td>
+                    <td>{{ subadmin.joined }}</td>
+                    <td><a href="{% url 'subadmin_detail' subadmin.id %}"><button>Update</button></a><a href="{% url 'subadmin_delete' subadmin.id %}"><button>Delete</button></a></td>
+                </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <h4>No Subadmins</h4>
+          {% endif %}
+    </div>
+{% endblock content %}

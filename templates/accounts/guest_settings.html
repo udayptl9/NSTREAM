@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+    <style>
+        button {
+            padding: 8px;
+            background: rgb(233, 193, 178);
+        }
+        button:hover {
+            background: rgb(255, 165, 132);
+            cursor: pointer;
+        }
+    </style>
+    <h4>Settings</h4>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label>Guest Timer</label>
+            <input type="number" name="timer" value="{{ guest.timer }}"><br><br>
+            <label>Ad Timing (in seconds)</label>
+            <input type="number" name="ad_timer" value="{{ ad_timer.ad_timing }}"><br><br>
+            <label>Thumbnails per page</label>
+            <input type="number" name="per_page" value="{{ per_page.per_page }}">
+        </div><br>
+        <button type="submit">Update</button>
+    </form>
+{% endblock content %}

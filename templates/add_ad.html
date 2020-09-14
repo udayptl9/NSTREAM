@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="login-page">
+    <div class="form" style="padding-top: 10px;">
+      <h3>Add Image Ad Here</h3>
+      <form method='POST' method="{% url 'adImage' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file" name="image" accept="image/*"/>
+          <input type="text" name="link" placeholder="link"/>
+          <input type="text" name="title" placeholder="title"/>
+          <button type="Submit">Add Image</button>
+      </form>
+    </div>
+</div>
+<style>
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  </style>
+  <div class="container">
+      <h3>Manage Ad Images Here</h3>
+      {% if ads %}
+      <table>
+          <tr>
+            <th>Sl. No.</th>
+            <th>Title</th>
+            <th>Image</th>
+            <th>Link</th>
+            <th>Actions</th>
+          </tr>
+          {% for ad in ads %}
+              <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ ad.title }}</td>
+                  <td>{{ ad.image.name }}</td>
+                  <td>{{ ad.link }}</td>
+                  <td><a href="{% url 'delete_adimage' ad.id %}">Delete</a></td>
+              </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <h4>No Ad Images</h4>
+        {% endif %}
+  </div>
+{% endblock content %}

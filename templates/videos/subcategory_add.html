@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="login-page">
+    <div class="form" style="padding-top: 10px;">
+        <h3>Add Sub Category</h3>
+        {% if message %}
+            <h5 style="color: red;">Category Already Existed</h5>
+        {% endif %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label>Category</label>
+    <select name="category" required id="id_category">
+        <option selected>Category</option>
+        {% for category in categories %}
+            <option>{{ category.category }}</option>
+        {% endfor %}
+    </select>
+    <label>Sub Category</label>
+    <div>
+        <input type="text" id="id_category" name="subcategory" placeholder="category">
+    </div>
+    <label>Image</label>
+    <input type="file" name="image" accept="image/*">
+    <div>
+        <button type="submit">Add Category</button>
+    </div>
+</form>
+</div>
+</div>
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    </style>
+    <div class="container">
+        <h3>Manage Subcategories Here</h3>
+        {% if subcategories %}
+        <table>
+            <tr>
+              <th>Sl. No.</th>
+              <th>SubCategory</th>
+              <th>Category</th>
+            </tr>
+            {% for subcategory in subcategories %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ subcategory.subcategory }}</td>
+                    <td>{{ subcategory.category.category }}</td>
+                </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <h4>No Subcategories</h4>
+          {% endif %}
+    </div>
+{% endblock content %}

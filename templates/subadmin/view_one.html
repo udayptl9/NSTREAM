@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if subadmin %}
+        <h4>Subadmin Details</h4>
+        <form method="POST">
+            {% csrf_token %}
+            <div>
+                <label for="id_email">Email: </label>
+                <input type="email" name="email" id="id_email" value="{{ subadmin.email }}">
+            </div>
+            <div>
+                <label for="id_superuser">Superuser: </label>
+                {% if subadmin.superuser %}
+                    <input type="radio" id="id_superuser" name="action" value="superuser" checked>
+                {% else %}
+                    <input type="radio" id="id_superuser" name="action" value="superuser">
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_others">Add video, Add language, Add categories</label>
+                {% if subadmin.addvideo %}
+                    <input type="radio" id="id_others" name="action" value="add video, add language, add categories" checked requried>
+                {% else %}
+                    <input type="radio" id="id_others" name="action" value="add video, add language, add categories" requried>
+                {% endif %}
+            </div>
+            <button type="submit">Update</button>
+        </form>
+    {% endif %}
+{% endblock content %}

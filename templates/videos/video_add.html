@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .submit:disabled {
+        cursor: not-allowed;
+    }
+    .video_section {
+        display: grid;
+        grid-template-columns: 50% auto;
+        grid-template-areas: "form view";
+    }
+    .login-page {
+        margin-left: 25px;
+        grid-area: form;
+    }
+    .form {
+        max-width: 550px;
+        width: 550px;
+    }
+    .view {
+        grid-area: view;
+    }
+    .image_show, .video_show {
+        display: none;
+    }
+    .class:hover {
+        cursor: pointer;
+    }
+    .subcategory {
+        display: none;
+    }
+    .progress-bar {
+        border: 1px solid darkgreen;
+        width: 100%;
+        height: 15px;
+    }
+    .progress {
+        height: 15px;
+        width: 0%;
+        background: darkgreen;
+        text-align: center;
+        color: white;
+    }
+</style>
+<div class="progress-bar">
+    <div class="progress">0%</div>
+  </div>
+  <br>
+    <div class="video_section">
+  <div class="login-page">
+    <div class="form" style="padding-top: 10px;">
+<h3>Add video</h3>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label id="id_title">Title</label>      
+    <input type="text" name="title" maxlength="200" placeholder="title" required id="id_title">
+    <label for="id_description">Description</label><br>
+    <textarea placeholder="description" cols="55" rows="10" name="description" required id="id_description"></textarea><br>
+    <label for="id_language">Language</label><br>
+    <select name="language" required id="id_language">
+        <option selected>Language</option>
+        {% for language in languages %}
+            <option>{{ language.language }}</option>
+        {% endfor %}
+    </select>
+    <label for="id_category">Category</label>
+    <select name="category" required id="id_category">
+        <option>Category</option>
+        {% for category in categories %}
+            <option>{{ category.category }}</option>
+        {% endfor %}
+    </select>
+    <div class="subcategory" style="width: 100%;">
+        <label> Sub Category</label>
+        <select name="subcategory" required>
+        </select>
+    </div><br>
+    <label for="id_upcoming">Upcoming</label>
+    <select name="upcoming" required id="id_upcoming">
+        <option>No Upcomings</option>
+        {% for upcoming in upcomings %}
+            <option>{{ upcoming.title }}</option>
+        {% endfor %}
+    </select>
+    <label for="id_thumbnail">Thumbnail</label>
+    <input onchange="display_image(event)" type="file" name="thumbnail" accept="image/*" required id="id_thumbnail">
+    <small style="color: red;" class="error_message"></small><br>
+    <label for="id_video">Video</label>
+    <input onchange="display_video(event)" type="file" name="video" accept="video/*" required id="id_video">
+    <button disabled class="submit" type="submit">Add Video</button>
+</form>
+<script>
+    $(document).ready(function(){
+        document.querySelector('.progress-bar').style.display = 'none';
+        $('form').on('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData($('form')[0]);
+            $.ajax({
+                xhr: function() {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener('progress', function(e) {
+                        if(e.lengthComputable) {
+                            document.querySelector('.progress-bar').style.display = 'block';
+                            var percentage_loaded = Math.round((e.loaded / e.total) * 100);
+                            document.querySelector('.progress').style.width = `${percentage_loaded}%`;
+                            document.querySelector('.progress').innerHTML = `${percentage_loaded}%`;
+                        }
+                    })
+                    return xhr;
+                },
+                type: 'POST',
+                url: "{% url 'video_add' %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    location.href = "{% url 'home' %}";
+                }
+            })    
+        })
+    })
+</script>
+</div>
+</div>
+<div class="view">
+    <div class="image_show">
+        <h4>Thumbnail Uploaded:</h4>
+        <img class="display-image" style="max-width: 100%; max-height: 650px;" src=""><br>
+        <small class="image-size"></small>
+    </div>
+    <div class="video_show">
+        <h4>Video Uploaded:</h4>
+        <video class="display-video" src="" controls style="max-height: 650px; max-width: 100%;"></video><br>
+        <small class="video-size"></small>
+    </div>
+</div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.image_show').hide()
+        $('.video_show').hide()
+    })
+    document.querySelector('#id_category').addEventListener('change', function() {
+        var category = document.querySelector('#id_category').value
+        if(category.toLowerCase() !== 'category' && category !== 'Category') {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'video_add' %}",
+                data: {
+                    action: 'get_subcategory',
+                    category: category,
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                }, success: function(json) {
+                    if(json.text == 'true') {
+                        var subcategories = json.subcategories;
+                        document.querySelector('.subcategory').style.display = 'inline-block';
+                        $("select[name='subcategory']").empty();
+                        for(i of subcategories) {
+                            $("select[name='subcategory']").append('<option>'+i+'</option>');
+                        }
+                    }
+                }
+            })
+        }
+    })
+    function display_image(event) {
+        var image = document.querySelector('.display-image');
+        image.onload = function() {
+            const image_height = this.height;
+            const image_width = this.width;
+            if(image_width/image_height < 1.3 || image_width/image_height > 5.3) {
+                document.querySelector('.error_message').innerHTML = 'Image Dimensions error'
+            }
+            else {
+                document.querySelector('.error_message').innerHTML = ''
+                document.querySelector('.submit').disabled = false;
+                document.querySelector('.submit').style.cursor = "pointer";
+            }
+        }
+	    image.src = URL.createObjectURL(event.target.files[0]);
+        image_file_size = event.target.files[0].size / 1024;
+        if(image_file_size > 1024) {
+            image_file_size = image_file_size / 1024;
+            image_file_size = image_file_size.toFixed(2)
+            document.querySelector('.image-size').innerHTML = "Image Size: " + image_file_size + " MB";
+        } else {
+            image_file_size = image_file_size.toFixed(2)
+            document.querySelector('.image-size').innerHTML = "Image Size: " + image_file_size + " KB";
+        }
+        $('.image_show').show();
+    }
+    function display_video(event) {
+        var video = document.querySelector('.display-video');
+	    video.src = URL.createObjectURL(event.target.files[0]);
+        video_file_size = event.target.files[0].size / 1024;
+        if(video_file_size > 1024) {
+            video_file_size = video_file_size / 1024;
+            if(video_file_size > 1024) {
+                video_file_size = video_file_size.toFixed(2)
+                document.querySelector('.video-size').innerHTML = "Video Size: " + video_file_size + " GB";
+            } else{
+                video_file_size = video_file_size.toFixed(2)
+                document.querySelector('.video-size').innerHTML = "Video Size: " + video_file_size + " MB";
+            }
+        } else {
+            video_file_size = video_file_size.toFixed(2)
+            document.querySelector('.video-size').innerHTML = "Video Size: " + video_file_size + " KB";
+        }
+        $('.video_show').show();
+    }
+</script>
+{% endblock content %}

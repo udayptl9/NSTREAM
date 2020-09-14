@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3>Do you want to delete Ad? {{ adImage.title }}</h3>
+    <form action="{% url 'delete_adimage' adImage.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <button><a href="{% url 'adImage' %}">Go Back</a></button>
+    </form>
+{% endblock content %}

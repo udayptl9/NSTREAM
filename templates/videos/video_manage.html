@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+      overflow: auto;
+    }
+    .container {
+      overflow: auto;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    </style>
+    <div class="container">
+        <h3>Manage Videos Here</h3>
+        {% if videos %}
+        <table>
+            <tr>
+              <th>Title</th>
+              <th>Language</th>
+              <th>Category</th>
+              <th>SubCategory</th>
+              <th>Added By</th>
+              <th>Posted On</th>
+            </tr>
+            {% for video in videos %}
+                <tr>
+                    <td><a class="video_link" href="{% url 'video_view' video.id %}" style="text-decoration: none;">{{ video.title }}</a></td>
+                    <td>{{ video.language.language }}</td>
+                    <td>{{ video.category.category }}</td>
+                    <td>{{ video.subcategory.subcategory }}</td>
+                    <td>{{ video.user.first_name }} {{ video.user.last_name }}</td>
+                    <td>{{ video.posted_on }}</td>
+                </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <h4>No Videos</h4>
+          {% endif %}
+    </div>
+    <script>
+      if(window.localStorage.getItem('color_mode') == 'dark') {  
+        document.querySelectorAll('.video_link').style.color = 'white';
+      } else {
+        document.querySelectorAll('.video_link').style.color = 'black';
+      }
+    </script>
+{% endblock content %}
