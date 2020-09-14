@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<script src="{% static 'app/jssor.slider-28.0.0.min.js' %}"></script>
+<script src="{% static 'app/image_slider.js' %}"></script>
+<style>
+	.bar {
+		width: 80%;
+		padding: 10px;
+	}
+	.bar-button {
+		padding: 10px;
+		border: 1px solid lightyellow;
+		background: rgb(156, 214, 214);
+	}
+	.bar-button:hover {
+		background: rgb(66, 201, 201);
+		cursor: pointer;
+	}
+	h4>a {
+		text-decoration: none;
+	}
+	img {
+        border: 1px solid black;
+        border-radius: 0.7em;
+		height: 250px;
+    }
+	img:hover {
+		transform: scale(1.01);
+	}
+	.wrapper {
+		position: relative;
+	}
+	.column {
+		text-align: center;
+		padding: 1px 0 1px 0;
+	}
+	.card {
+		line-height:0;
+		display:inline-block;
+		width: 200px;
+	}
+	.video_results {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		grid-gap: 5px;
+	}
+	.video_results > div {
+		margin-bottom: 60px;
+	}
+	@media (max-width:1500px){
+		.video_results {
+			grid-template-columns: repeat(3, 1fr) !important;
+		}
+ 	}
+	@media (max-width:1000px){
+		.video_results {
+			grid-template-columns: repeat(2, 1fr) !important;
+		}
+ 	}
+	@media (max-width:500px){
+		.video_results {
+			grid-template-columns: repeat(1, 1fr) !important;
+		}
+ 	}
+	.search {
+		justify-content: center;
+		margin: auto;
+		align-content: center;
+	}
+	.jssorl-009-spin img {
+		animation-name: jssorl-009-spin;
+		animation-duration: 1.6s;
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
+	}
+
+	@keyframes jssorl-009-spin {
+		from { transform: rotate(0deg); }
+		to { transform: rotate(360deg); }
+	}
+
+	.jssora061 {display:block;position:absolute;cursor:pointer;}
+	.jssora061 .a {fill:none;stroke:#fff;stroke-width:360;stroke-linecap:round;}
+	.jssora061:hover {opacity:.8;}
+	.jssora061.jssora061dn {opacity:.5;}
+	.jssora061.jssora061ds {opacity:.3;pointer-events:none;}
+	.category-title {
+		padding: 5px;
+		text-align: center;
+		margin-bottom: 15px;
+	}
+	.category-title a {
+		text-decoration: none;
+		color: black;
+		font-weight: bold;
+	}
+	</style>
+		<form class="search" method="GET">
+			<input class="bar" type="text" name="query" placeholder="Search.." value>
+			<button type="submit" class="bar-button"><i class="fa fa-search" aria-hidden="true"></i></button>
+		</form>
+		<br>
+		{% if upcomings %}
+			<div id="jssor_1" style="position:relative;top:0px;left:0px;width:980px;height:380px;">
+				<div data-u="loading" class="jssorl-009-spin" style="position: relative;top:0px;left:0px;width:100%;height:100%;text-align:center;background-color:rgba(0,0,0,0.7);">
+					<img style="margin-top:-19px;position:relative;top:50%;width:38px;height:38px;" src="{% static 'app/images/spin.svg' %}" />
+				</div>
+				<div data-u="slides" style="cursor:default;position:relative;top:0px;left:0px;width:980px;height:380px;overflow:hidden;">
+					{% for upcoming in upcomings %}
+						<div>
+							<a href="{% url 'upcoming_view' upcoming.id %}" style="height: 100%; width: 100%; position: relative;">
+								<img data-u="image" src="{{ upcoming.thumbnail.url }}" /></a>
+								<div u="thumb">{{ upcoming.title }}
+								</div>
+						</div>
+					{% endfor %}
+				</div><a data-scale="0" href="https://www.jssor.com" style="display:none;position:absolute;">image gallery</a>
+				<div u="thumbnavigator" style="position:absolute;bottom:0px;left:0px;width:980px;height:50px;color:#FFF;overflow:hidden;cursor:default;background-color:rgba(0,0,0,.5);">
+					<div u="slides">
+						<div u="prototype" style="position:absolute;top:0;left:0;width:980px;height:50px;">
+							<div u="thumbnailtemplate" style="position:absolute;top:0;left:0;width:100%;height:100%;font-family:arial,helvetica,verdana;font-weight:normal;line-height:50px;font-size:16px;padding-left:10px;box-sizing:border-box;"></div>
+						</div>
+					</div>
+				</div>
+				<div data-u="arrowleft" class="jssora061" style="width:55px;height:55px;top:0px;left:25px;" data-autocenter="2" data-scale="0.75" data-scale-left="0.75">
+					<svg viewbox="0 0 16000 16000" style="position:absolute;top:0;left:0;width:100%;height:100%;">
+						<path class="a" d="M11949,1919L5964.9,7771.7c-127.9,125.5-127.9,329.1,0,454.9L11949,14079"></path>
+					</svg>
+				</div>
+				<div data-u="arrowright" class="jssora061" style="width:55px;height:55px;top:0px;right:25px;" data-autocenter="2" data-scale="0.75" data-scale-right="0.75">
+					<svg viewbox="0 0 16000 16000" style="position:absolute;top:0;left:0;width:100%;height:100%;">
+						<path class="a" d="M5869,1919l5984.1,5852.7c127.9,125.5,127.9,329.1,0,454.9L5869,14079"></path>
+					</svg>
+				</div>
+			</div>
+		{% endif %} <br>
+		<script type="text/javascript">jssor_1_slider_init();
+		</script>
+		{% if videos %}
+			<h4>Videos</h4>
+			<div class="video_results">
+				{% for video in videos %}
+					<div style="width: 300px; height: 200px;">
+						<a href="{% url 'video_view' video.id %}"><img width="100%" height="100%" src="{{ video.thumbnail.url }}" alt=""></a>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+		<div class="video_view_all">
+			{% if subcategories %}
+				{% for subcategories_list in subcategories %}
+				<div class="container-section">
+					{% with subcategories_list|first as subcategory %}
+					<div class="category-title" id="card-title-{{ forloop.counter }}">
+						<a class="category_title_link" href="{% url 'view_all' subcategory.category.category %}">{{ subcategory.category.category }}</a>
+					</div>
+					<script>
+						var card = document.querySelector('#card-title-{{ forloop.counter }}')
+						var r_value = Math.floor(Math.random()*255)
+						var g_value = Math.floor(Math.random()*255)
+						var b_value = Math.floor(Math.random()*255)
+						card.style.background = 'rgba(' + r_value +', ' + g_value + ", " + b_value + ", " + "0.5)"
+					</script>
+					<div class="main-div">
+						<div class="grid wrapper" id="cat-{{ forloop.counter }}">
+							{% for video in subcategories_list %}
+								<a href="/{{ subcategory.category.category }}/{{ video.subcategory }}/" class="card" id="card-{{ subcategory.category.category }}-{{ forloop.counter }}">
+									<img src="{{ video.image.url }}" style="width: 200px; height: 200px; border-radius: 2%;" alt="">
+									<h4 style="color: white; display: inline; position: relative; left: 10px; bottom: 15px;">{{ video.subcategory }}</h4>
+								</a>
+							{% endfor %}
+						</div>
+					</div>
+					{% endwith %}
+				</div>
+				<br>
+				{% endfor %}
+			{% else %}
+				<h3>No Categories</h3>
+			{% endif %}
+		</div>
+	<script>
+ 		document.querySelector('.bar').value = '{{ request.GET.query }}';
+		if(localStorage.getItem('color_mode') != null) {
+			var color_mode = window.localStorage.getItem('color_mode')
+			if(change_mode=='dark') {
+				document.querySelector('.category_title_link').style.color = 'white'
+			} else {
+				document.querySelector('.category_title_link').style.color = 'black'
+			}
+			change_mode(color_mode)
+        }
+	</script>
+{% endblock content %}

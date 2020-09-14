@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .error-message {
+        padding: 20px;
+        border: 1px solid rgb(251, 255, 0);
+        background: rgb(222, 223, 187);
+    }
+</style>
+{% if verify == False %}
+    <h4 class="error-message">Email not yet verified please verify: <a href="{% url 'verify_email' %}">Click here</a></h4>
+{% else %}
+    <h4 class="error-message">Email is verified</h4>
+{% endif %}
+{% endblock content %}

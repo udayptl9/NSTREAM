@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="login-page">
+    <div class="form" style="padding-top: 10px;">
+        <h3>Add Upcoming</h3>
+        {% if message %}
+            <h5>Upcoming Already Existed</h5>
+        {% endif %}
+<form method="POST" method="{% url 'upcoming' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="id_upcoming">Title</label>
+    <input type="text" id="id_upcoming" name="title" placeholder="title" required>
+    <label for="id_thumbnail">Thumbnail</label>
+    <input type="file" name="thumbnail" id="id_thumbnail" placeholder="thumbnail" accept="image/*" required>
+    <label for="id_trailer">Trailer</label>
+    <input type="file" name="trailer" id="id_trailer" placeholder="trailer" accept="video/*" requried>
+    <div>
+        <button class="submit" type="submit">Add Upcoming</button>
+    </div>
+</form>
+</div>
+</div>
+<style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    </style>
+    <div class="container">
+        <h3>Manage Upcomings Here</h3>
+        {% if upcomings %}
+        <table>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Upcoming</th>
+            </tr>
+            {% for upcoming in upcomings %}
+                <tr>
+                    <td>{{ forloop.counter}}</td>
+                    <td>{{ upcoming.title }}</td>
+                </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <h4>No Upcomings</h4>
+          {% endif %}
+    </div>
+{% endblock content %}

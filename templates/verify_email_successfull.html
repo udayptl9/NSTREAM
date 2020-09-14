@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .verify-message {
+        padding: 20px;
+        border: 1px solid rgb(251, 255, 0);
+        background: rgb(222, 223, 187);
+    }
+</style>
+<h3 class="verify-message">Email verified successfully <a href="{% url 'login2' %}">Login</a></h3>
+{% endblock content %}

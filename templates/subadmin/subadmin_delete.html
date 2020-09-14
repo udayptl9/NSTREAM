@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <form method="POST">
+        {% csrf_token %}
+        <h3>Do you want to delete Subadmin: {{ email }}? </h3>
+        <button type="submit">Delete</button>
+        <a href="{% url 'subadmin_view' %}">Cancel</a>
+    </form>   
+{% endblock content %}

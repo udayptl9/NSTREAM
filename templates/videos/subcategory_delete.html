@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3>Do you want to delete subcategory? {{ subcategory.subcategory }}</h3>
+    <form action="{% url 'subcategory_delete' subcategory.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <button><a href="{% url 'subcategory_add' %}">Go Back</a></button>
+    </form>
+{% endblock content %}
