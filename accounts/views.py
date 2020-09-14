@@ -6,6 +6,7 @@ import random
 import string
 import smtplib
 from django.contrib import messages
+from app.models import ads
 
 def register(request):
     try:
@@ -47,7 +48,7 @@ def login(request):
                 password = request.POST['password'].encode('utf-8')
                 account_password = account.password.encode('utf-8')
                 if bcrypt.checkpw(password, account_password):
-                    user = {'email': email, 'is_verified': account.is_verified, 'is_superuser': account.is_superuser, 'first_name': account.first_name, 'gender': account.gender}
+                    user = {'email': email, 'is_verified': account.is_verified, 'is_superuser': account.is_superuser, 'first_name': account.first_name, 'last_name': account.last_name ,'gender': account.gender, 'image': account.image.url}
                     request.session['user'] = user
                     messages.success(request, 'Logged in successfully')
                     return redirect('home')
@@ -66,6 +67,32 @@ def profile(request):
         return redirect('logout2')
     if request.session['user']['email'] != 'guest':
         user = accounts.objects.get(email=request.session['user']['email'])
+        if request.method == "POST":
+            user_session = request.session['user']
+            user.email = request.POST['email']
+            user.first_name = request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user.mobileno = request.POST['mobileno']
+            user.age = request.POST['age']
+            gender = request.POST['gender']
+            qualification = request.POST['qualification']
+            image = request.FILES.get('image', False)
+            if image:
+                user.image = image
+            if gender != "":
+                user.gender = gender
+                user_session['gender'] = user.gender
+            if gender != "":
+                user.qualification = qualification
+            user.save()
+            user_session['first_name'] = user.first_name
+            user_session['last_name'] = user.last_name
+            try:
+                user_session['image'] = user.image.url
+            except:
+                pass
+            request.session['user'] = user_session
+            return redirect('profile')
         context = {
             'user': user,
             'ads': ads.objects.all()[:6]

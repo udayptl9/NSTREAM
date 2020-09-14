@@ -1,6 +1,7 @@
 from django.db import models
 
 class accounts(models.Model):
+    image = models.ImageField(upload_to='profiles', default='default.jpg', blank=True, null=True)
     email = models.CharField(max_length=250, unique=True, blank=False, null=False)
     first_name = models.CharField(max_length=50, blank=False, null=False)
     last_name = models.CharField(max_length=50, blank=False, null=False)

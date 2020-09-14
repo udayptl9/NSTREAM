@@ -10,6 +10,7 @@
         <title>NSFILMS</title>
     {% endif %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
 </head>
 <style>
     *{
@@ -398,6 +399,10 @@ main, .logo, .user_email {
     border: 0.1px solid black;
     border-radius: 50%;
 }
+.logo a {
+    font-family: 'Permanent Marker', cursive;
+    font-size: x-large;
+}
 .header {
     margin-bottom: 0;
 }
@@ -406,6 +411,24 @@ main, .logo, .user_email {
 }
 h1 {
     margin-top: 6px;
+}
+.profile_image {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.profile_settings {
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.profile_name {
+    text-transform: uppercase;
 }
 </style>
     <script
@@ -420,7 +443,7 @@ h1 {
     <div class="page">
         <header>
             <div class="nav">
-                <h1 class="logo" style="padding: -10px; padding-left: 15px;"><a href="{% url 'home' %}"><img class="logo_image" style="width: 50px; height: 50px; margin-bottom: -18px;" src="{% static 'app/images/logo.jpeg' %}" alt="NSTREAM">NSTREAM</a></h1>
+                <h1 class="logo" style="padding: -10px; padding-left: 15px;"><a href="{% url 'home' %}"><img class="logo_image" style="width: 50px; height: 50px; margin-bottom: -18px;" src="{% static 'app/images/logo.jpeg' %}" alt="NSTREAM">N S T R E A M</a></h1>
                 <span class="timer">
                     {% if request.session.user.email == 'guest' %}
                         <p class="clock"></p>
@@ -494,6 +517,12 @@ h1 {
                           </label> <button class="menu_switch" style="padding: 8px; background: #ca7c7c;" onclick="showNav()">Menu</button></li>    
                 </div>
                 <div class="nav-items">
+                    <div class="profile_settings">
+                        {% if request.session.user.email != 'guest' and request.session.user != '' %}
+                            <img src="{{ request.session.user.image }}" alt="" class="profile_image">
+                            <li class="navigation-item profile_name"><a href="{% url 'profile' %}">  {{ request.session.user.first_name }} {{ request.session.user.last_name }}</a></li><br>
+                        {% endif %}
+                    </div>
                     <li class="navigation-item"><a href="{% url 'home' %}"><i style="color: white;" class="fa fa-home" aria-hidden="true"></i>  Home</a></li>
                     {% if request.session.user.is_superuser %}
                         <li class="navigation-item"><a href="{% url 'video_add' %}"><i style="color: white;" class="fa fa-video-camera" aria-hidden="true"></i> Add Video</a></li>
@@ -516,6 +545,7 @@ h1 {
                     {% if request.session.user %}
                         {% if request.session.user.email != 'guest' %}
                             <li class="navigation-item"><a href="{% url 'password_reset' %}"><i style="color: white;" class="fa fa-key" aria-hidden="true"></i>  Reset Password</a></li>
+                            <li class="navigation-item"><a href="{% url 'profile' %}"><i style="color: white;" class="fa fa-key" aria-hidden="true"></i>  Profile</a></li>
                         {% endif %}
                         <li class="navigation-item"><a href="{% url 'logout2' %}"><i style="color: white;" class="fa fa-sign-out" aria-hidden="true"></i>  Logout</a></li>
                     {% else %}
@@ -557,7 +587,7 @@ h1 {
                     document.styleSheets[1].disabled = true;
                     change_color_mode()
                     location.href = "{% url 'home' %}"
-                },50000)
+                },5000)
             } else {
                 document.querySelector('.sign').style.display = 'none';
                 document.querySelector('.page').style.display = '';
